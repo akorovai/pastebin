@@ -6,7 +6,7 @@ eureka:
       defaultZone: http://localhost:8761/eureka  # Adres URL serwera Eureka, do którego klient się łączy (serwer Eureka działa na localhost:8761)
 
 name:
-  value: akorovai  # Nazwa usługi/aplikacji ustawiona na "akorovai"
+  value: pastebin  # Nazwa usługi/aplikacji ustawiona na "akorovai"
 
 spring:
   cloud:
