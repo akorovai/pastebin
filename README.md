@@ -1,1 +1,1 @@
-# pastebin
+# pastebin[]()
