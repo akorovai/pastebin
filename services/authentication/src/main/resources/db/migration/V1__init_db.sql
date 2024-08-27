@@ -7,7 +7,7 @@ CREATE SEQUENCE IF NOT EXISTS token_seq START WITH 1 INCREMENT BY 50;
 
 CREATE TABLE _user
 (
-    id                 INTEGER      NOT NULL,
+     id                 UUID      NOT NULL,
     nickname           VARCHAR(255) NOT NULL,
     password           VARCHAR(255),
     created_date       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE _user
 CREATE TABLE _user_roles
 (
     roles_id INTEGER NOT NULL,
-    user_id  INTEGER NOT NULL
+    user_id  UUID NOT NULL
 );
 
 CREATE TABLE role
@@ -37,7 +37,7 @@ CREATE TABLE token
     created_at   TIMESTAMP WITHOUT TIME ZONE,
     expires_at   TIMESTAMP WITHOUT TIME ZONE,
     validated_at TIMESTAMP WITHOUT TIME ZONE,
-    user_id      INTEGER NOT NULL,
+    user_id      UUID NOT NULL,
     CONSTRAINT pk_token PRIMARY KEY (id)
 );
 

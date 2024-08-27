@@ -1,5 +1,5 @@
 CREATE TABLE post (
-                        id VARCHAR(10) PRIMARY KEY,
+                        id BIGINT PRIMARY KEY,
                         user_id UUID NOT NULL,
                         title VARCHAR(255),
                         content TEXT NOT NULL,
