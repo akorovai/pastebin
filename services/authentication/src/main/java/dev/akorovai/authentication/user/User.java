@@ -1,12 +1,8 @@
 package dev.akorovai.authentication.user;
 
-
 import dev.akorovai.authentication.role.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -24,12 +20,13 @@ import java.util.stream.Collectors;
 
 import static jakarta.persistence.FetchType.EAGER;
 
-
 @Getter
 @Setter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+@ToString(of = {"id", "nickname"})
 @Entity
 @Table(name = "_user")
 @EntityListeners(AuditingEntityListener.class)
@@ -38,14 +35,15 @@ public class User implements UserDetails, Principal {
 	@Id
 	@GeneratedValue
 	private UUID id;
+
 	@Column(nullable = false, unique = true)
 	private String nickname;
 
+	@Column(nullable = false)
 	private String password;
 
 	@ManyToMany(fetch = EAGER)
 	private List<Role> roles;
-
 
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
@@ -57,7 +55,9 @@ public class User implements UserDetails, Principal {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
+		return this.roles.stream()
+				       .map(role -> new SimpleGrantedAuthority(role.getName()))
+				       .collect(Collectors.toList());
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class User implements UserDetails, Principal {
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return  true;
+		return true;
 	}
 
 	@Override
