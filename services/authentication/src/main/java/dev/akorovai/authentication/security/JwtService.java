@@ -1,5 +1,6 @@
 package dev.akorovai.authentication.security;
 
+import dev.akorovai.authentication.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -35,8 +35,13 @@ public class JwtService {
 			Map<String, Object> extraClaims,
 			UserDetails userDetails
 	) {
+
+		if (userDetails instanceof User user) {
+			extraClaims.put("userId", user.getId().toString());
+		}
 		return buildToken(extraClaims, userDetails, jwtExpiration);
 	}
+
 
 	private String buildToken(
 			Map<String, Object> extraClaims,
@@ -70,6 +75,9 @@ public class JwtService {
 	private Date extractExpiration(String token) {
 		return extractClaim(token, Claims::getExpiration);
 	}
+
+
+
 
 	private Claims extractAllClaims(String token) {
 		return Jwts

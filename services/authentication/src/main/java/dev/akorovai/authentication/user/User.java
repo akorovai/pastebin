@@ -19,6 +19,7 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static jakarta.persistence.FetchType.EAGER;
@@ -36,7 +37,7 @@ public class User implements UserDetails, Principal {
 
 	@Id
 	@GeneratedValue
-	private Integer id;
+	private UUID id;
 	@Column(nullable = false, unique = true)
 	private String nickname;
 

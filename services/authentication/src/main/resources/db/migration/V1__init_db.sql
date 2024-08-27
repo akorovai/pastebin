@@ -1,3 +1,4 @@
+
 CREATE SEQUENCE IF NOT EXISTS _user_seq START WITH 1 INCREMENT BY 50;
 
 CREATE SEQUENCE IF NOT EXISTS role_seq START WITH 1 INCREMENT BY 50;
@@ -9,8 +10,6 @@ CREATE TABLE _user
     id                 INTEGER      NOT NULL,
     nickname           VARCHAR(255) NOT NULL,
     password           VARCHAR(255),
-    account_locked     BOOLEAN      NOT NULL,
-    enabled            BOOLEAN      NOT NULL,
     created_date       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     last_modified_date TIMESTAMP WITHOUT TIME ZONE,
     CONSTRAINT pk__user PRIMARY KEY (id)
