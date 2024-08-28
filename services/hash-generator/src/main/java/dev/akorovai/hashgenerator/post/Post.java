@@ -1,9 +1,10 @@
-package dev.akorovai.post.post;
+package dev.akorovai.hashgenerator.post;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,40 +13,37 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "post")
+@EntityListeners(AuditingEntityListener.class)
+@ToString
 public class Post {
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@Column(name = "hash", length = 64, unique = true, nullable = false)
+	private String hash;
 
 	@Column(nullable = false, name = "user_id")
 	private UUID userId;
 
-	@Size(max = 255)
-	@Column(name = "title")
-	private String title;
-
-	@Column(columnDefinition = "TEXT", nullable = false)
-	private String content;
+	@Column(name = "s3_url")
+	private String s3Url;
 
 	@Size(max = 50)
 	@Column(name = "language")
 	private String language;
 
 	@CreatedDate
-	@Column(nullable = false, updatable = false, name = "created_at", columnDefinition = "TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP")
+	@Column(nullable = false, updatable = false, name = "created_at")
 	private LocalDateTime createdDate;
 
-	@Column(nullable = false, name = "expires_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
-	private LocalDateTime expiresAt;
+	@Column(nullable = false, name = "expires_at")
+	private LocalDateTime expiresDate;
 
 	@Column(nullable = false, name = "is_public", columnDefinition = "BOOLEAN DEFAULT true")
 	private boolean isPublic;
 
 	@Column(name = "view_count", columnDefinition = "INT DEFAULT 0")
 	private int viewCount;
-
-	@Column(name = "hash", length = 64)
-	private String hash;
 }

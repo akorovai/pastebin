@@ -61,23 +61,21 @@ public class JwtFilter extends GenericFilterBean {
 					                .parseClaimsJws(token)
 					                .getBody();
 
-			// Check for required claims
 			if (claims.getSubject() == null) {
 				throw new JwtException("JWT token is missing 'subject' claim");
 			}
 
-			// Set claims for further use
+
 			request.setAttribute("claims", claims);
 
 		} catch (JwtException e) {
-			// Log and handle JWT validation errors
 			logger.severe("JWT validation error: " + e.getMessage());
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.getWriter().write("Invalid or expired JWT token: " + e.getMessage());
 			return;
 		}
 
-		// Continue with the next filter
+
 		filterChain.doFilter(request, response);
 	}
 }

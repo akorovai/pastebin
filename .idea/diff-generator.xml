@@ -2,6 +2,6 @@
 <project version="4">
   <component name="DiffGenerationConfig">
     <option name="snapshotDb" value="false" />
-    <option name="snapshotModelValue" value="authentication:authentication" />
+    <option name="snapshotModelValue" value="hash-generator:hash-generator" />
   </component>
 </project>

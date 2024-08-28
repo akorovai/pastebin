@@ -1,4 +1,5 @@
 package dev.akorovai.post.post;
 
-public record PostResponse() {
+import java.util.UUID;
+public record PostResponse(UUID userId) {
 }

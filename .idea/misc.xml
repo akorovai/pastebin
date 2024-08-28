@@ -12,6 +12,7 @@
         <option value="$PROJECT_DIR$/services/auth/pom.xml" />
         <option value="$PROJECT_DIR$/services/authentication/pom.xml" />
         <option value="$PROJECT_DIR$/services/post/pom.xml" />
+        <option value="$PROJECT_DIR$/services/hash-generator/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

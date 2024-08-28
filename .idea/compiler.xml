@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="post" />
+        <module name="hash-generator" />
         <module name="config" />
         <module name="discovery" />
         <module name="authentication" />
@@ -23,6 +24,7 @@
       <module name="authentication" options="-parameters" />
       <module name="config" options="-parameters" />
       <module name="discovery" options="-parameters" />
+      <module name="hash-generator" options="-parameters" />
       <module name="post" options="-parameters" />
     </option>
   </component>

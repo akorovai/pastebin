@@ -1,27 +1,6 @@
 server:
   port: 8020
 
-spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/posts
-    username: akorovai
-    password: pass
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-  flyway:
-    baselineOnMigrate: true
-    enabled: true
-    baselineDescription: "init"
-    baselineVersion: 0
-    user: ${spring.datasource.username}
-    password: ${spring.datasource.password}
-    locations: classpath:db/migration
-
 application:
   security:
     jwt:
