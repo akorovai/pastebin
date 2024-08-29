@@ -11,19 +11,31 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/api/auth")
 public class AuthenticationController {
+
 	private final AuthenticationService service;
 
 	@PostMapping("/register")
-	@ResponseStatus(HttpStatus.ACCEPTED)
-	public ResponseEntity<?> register( @RequestBody @Valid RegistrationRequest request ) {
+	public ResponseEntity<ResponseObject> register(@RequestBody @Valid RegistrationRequest request) {
 		service.register(request);
-		return ResponseEntity.accepted().build();
+		// Create a response object for registration
+		ResponseObject responseObject = ResponseObject.builder()
+				                                .code(HttpStatus.CREATED.value())
+				                                .message("User registered successfully")
+				                                .build();
+		return ResponseEntity.status(HttpStatus.CREATED).body(responseObject);
 	}
 
-	@PostMapping("/authenticate")
-	public ResponseEntity<AuthenticationResponse> authenticate( @RequestBody AuthenticationRequest request ) {
-		return ResponseEntity.ok(service.authenticate(request));
+	@PostMapping("/login")
+	public ResponseEntity<ResponseObject> authenticate(@RequestBody AuthenticationRequest request) {
+		AuthenticationResponse authResponse = service.authenticate(request);
+
+		ResponseObject responseObject = ResponseObject.builder()
+				                                .code(HttpStatus.OK.value())
+				                                .message("Authentication successful")
+				                                .build();
+
+		responseObject.setMessage("Authentication successful. Token: " + authResponse.getToken());
+
+		return ResponseEntity.ok(responseObject);
 	}
-
-
 }

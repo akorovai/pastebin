@@ -2,7 +2,6 @@ package dev.akorovai.hashgenerator.post;
 
 import dev.akorovai.hashgenerator.event.PostViewedEvent;
 import dev.akorovai.hashgenerator.excepion.PostNotFoundException;
-import dev.akorovai.hashgenerator.excepion.PostNotPublicException;
 import dev.akorovai.hashgenerator.hash.HashGeneratorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +39,7 @@ public class PostServiceImpl implements PostService {
 				            .build();
 
 		Post savedPost = repository.save(post);
-		log.info("Post created and saved: {}", savedPost.toString());
+		log.info("Post created and saved: {}", savedPost);
 
 		return mapper.map(savedPost, PostResponse.class);
 	}
@@ -55,10 +54,6 @@ public class PostServiceImpl implements PostService {
 					            return new PostNotFoundException("Post with hash " + hash + " not found");
 				            });
 
-		if (!post.isPublic()) {
-			log.warn("Post with hash {} is not public", hash);
-			throw new PostNotPublicException("Post with hash " + hash + " is not public");
-		}
 
 		eventPublisher.publishEvent(new PostViewedEvent(hash));
 		log.info("Post with hash {} is public and has been viewed", hash);

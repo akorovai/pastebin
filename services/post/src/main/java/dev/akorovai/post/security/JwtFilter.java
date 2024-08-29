@@ -11,21 +11,23 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 @Component
+@Slf4j
 public class JwtFilter extends GenericFilterBean {
-	private static final Logger logger = Logger.getLogger(JwtFilter.class.getName());
+
 	private final SecretKey key;
 
 	public JwtFilter(@Value("${application.security.jwt.secret-key}") String secretKey) {
 		this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
+		log.debug("JWT secret key initialized successfully.");
 	}
 
 	@Override
@@ -33,26 +35,25 @@ public class JwtFilter extends GenericFilterBean {
 			throws IOException, ServletException {
 		final HttpServletRequest request = (HttpServletRequest) servletRequest;
 		final HttpServletResponse response = (HttpServletResponse) servletResponse;
-
 		final String authHeader = request.getHeader("Authorization");
+
 		if (authHeader == null) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.getWriter().write("Authorization header is missing");
+			handleUnauthorized(response, "Authorization header is missing");
 			return;
 		}
 
 		if (!authHeader.startsWith("Bearer ")) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.getWriter().write("Invalid Authorization header format. Expected 'Bearer <token>'");
+			handleUnauthorized(response, "Invalid Authorization header format. Expected 'Bearer <token>', received: {}", authHeader);
 			return;
 		}
 
 		final String token = authHeader.substring(7);
 		if (token.isEmpty()) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.getWriter().write("JWT token is missing after 'Bearer '");
+			handleUnauthorized(response, "JWT token is missing after 'Bearer '");
 			return;
 		}
+
+		log.debug("Processing JWT token");
 
 		try {
 			Claims claims = Jwts.parserBuilder()
@@ -65,17 +66,21 @@ public class JwtFilter extends GenericFilterBean {
 				throw new JwtException("JWT token is missing 'subject' claim");
 			}
 
-
 			request.setAttribute("claims", claims);
+			log.debug("JWT token successfully parsed with claims: {}", claims);
 
 		} catch (JwtException e) {
-			logger.severe("JWT validation error: " + e.getMessage());
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.getWriter().write("Invalid or expired JWT token: " + e.getMessage());
+			log.error("JWT validation error: {}", e.getMessage());
+			handleUnauthorized(response, "Invalid or expired JWT token: {}", e.getMessage());
 			return;
 		}
 
-
 		filterChain.doFilter(request, response);
+	}
+
+	private void handleUnauthorized(HttpServletResponse response, String message, Object... args) throws IOException {
+		log.warn(message, args);
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		response.getWriter().write(String.format(message, args));
 	}
 }

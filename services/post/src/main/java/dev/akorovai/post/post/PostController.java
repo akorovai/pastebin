@@ -1,18 +1,21 @@
 package dev.akorovai.post.post;
 
 import dev.akorovai.post.security.JwtUtil;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/posts")
-@RequiredArgsConstructor
 public class PostController {
 
 	private final PostService service;
 	private final JwtUtil jwtUtil;
-
+	@Autowired
+	public PostController(PostService service, JwtUtil jwtUtil) {
+		this.service = service;
+		this.jwtUtil = jwtUtil;
+	}
 	@PostMapping
 	public ResponseEntity<PostResponse> createPost(
 			@RequestBody PostRequest request,
