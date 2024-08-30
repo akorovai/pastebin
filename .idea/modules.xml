@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/services/authentication/authentication.iml" filepath="$PROJECT_DIR$/services/authentication/authentication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/services/config/config.iml" filepath="$PROJECT_DIR$/services/config/config.iml" />
+      <module fileurl="file://$PROJECT_DIR$/services/discovery/discovery.iml" filepath="$PROJECT_DIR$/services/discovery/discovery.iml" />
+      <module fileurl="file://$PROJECT_DIR$/services/hash-generator/hash-generator.iml" filepath="$PROJECT_DIR$/services/hash-generator/hash-generator.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/pastebin.iml" filepath="$PROJECT_DIR$/.idea/pastebin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/services/post/post.iml" filepath="$PROJECT_DIR$/services/post/post.iml" />
     </modules>
   </component>
 </project>

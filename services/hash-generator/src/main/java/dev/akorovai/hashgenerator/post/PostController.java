@@ -16,7 +16,7 @@ public class PostController {
 
 	@PostMapping
 	public ResponseEntity<PostResponse> createPostWithUniqueHash(@Valid @RequestBody PostRequest postRequest) {
-		log.info("Received request to create post with URL: {}", postRequest.s3Url());
+
 
 		PostResponse newPost = service.createPost(postRequest);
 

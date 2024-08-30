@@ -2,12 +2,13 @@ package dev.akorovai.hashgenerator.hash;
 
 import dev.akorovai.hashgenerator.excepion.HashGenerationException;
 import dev.akorovai.hashgenerator.post.PostRepository;
+import dev.akorovai.hashgenerator.redis.RedisService;
 import jakarta.annotation.PostConstruct;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -15,55 +16,31 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.UUID;
-
-@Getter
-enum HashConfig {
-	HASH_KEY("available_hashes"),
-	HASH_POOL_SIZE(10);
-
-	private final String stringValue;
-	private final int intValue;
-
-	HashConfig(String stringValue) {
-		this.stringValue = stringValue;
-		this.intValue = 0;
-	}
-
-	HashConfig(int intValue) {
-		this.stringValue = null;
-		this.intValue = intValue;
-	}
-}
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 @Slf4j
+@EnableAsync
 public class HashGeneratorServiceImpl implements HashGeneratorService {
 
-	private final RedisTemplate<String, String> redisTemplate;
 	private final PostRepository repository;
+	private final RedisService redisService;
+
+	private static final String HASH_KEY = "available_hashes";
+	private static final int HASH_POOL_SIZE = 100;
+	private static final int HASH_THRESHOLD = 80;
 
 	@PostConstruct
 	public void preloadHashes() {
-		Long size = redisTemplate.opsForList().size(HashConfig.HASH_KEY.getStringValue());
-		if (size == null || size < HashConfig.HASH_POOL_SIZE.getIntValue()) {
-			log.info("Preloading {} hashes into Redis...", HashConfig.HASH_POOL_SIZE.getIntValue() - (size == null ? 0 : size));
-			for (int i = size == null ? 0 : size.intValue(); i < HashConfig.HASH_POOL_SIZE.getIntValue(); i++) {
-				String hash = generateHash(UUID.randomUUID().toString());
-				redisTemplate.opsForList().rightPush(HashConfig.HASH_KEY.getStringValue(), hash);
-				log.debug("Generated and stored hash: {}", hash);
-			}
-			log.info("Preloading complete.");
-		} else {
-			log.info("No need to preload hashes. Redis already has {} hashes.", size);
-		}
+		replenishHashesIfNeeded().join();
 	}
 
 	@Override
 	public String generateUniqueHash() {
 		log.info("Generating unique hash...");
 
-		String hash = redisTemplate.opsForList().leftPop(HashConfig.HASH_KEY.getStringValue());
+		String hash = redisService.pullValue(HASH_KEY);
 		log.debug("Popped hash from Redis: {}", hash);
 
 		if (hash == null) {
@@ -71,23 +48,43 @@ public class HashGeneratorServiceImpl implements HashGeneratorService {
 			log.debug("Generated new hash as Redis was empty: {}", hash);
 		}
 
-		boolean isUnique = !repository.existsByHash(hash);
-		log.debug("Hash uniqueness check for {}: {}", hash, isUnique);
-
-		if (!isUnique) {
-			redisTemplate.opsForList().rightPush(HashConfig.HASH_KEY.getStringValue(), hash);
+		if (!isHashUnique(hash)) {
 			log.warn("Hash {} is not unique, generating a new one.", hash);
 			hash = generateHash(UUID.randomUUID().toString());
 		}
 
-		Long size = redisTemplate.opsForList().size(HashConfig.HASH_KEY.getStringValue());
-		if (size == null || size < HashConfig.HASH_POOL_SIZE.getIntValue()) {
-			redisTemplate.opsForList().rightPush(HashConfig.HASH_KEY.getStringValue(), hash);
-			log.debug("Added hash back to Redis: {}", hash);
-		}
+		replenishHashesIfNeeded();
 
 		log.info("Generated unique hash: {}", hash);
 		return hash;
+	}
+
+	@Async
+	public CompletableFuture<Void> replenishHashesIfNeeded() {
+		int currentSize = getRedisSize();
+		int hashesToGenerate = HASH_POOL_SIZE - currentSize;
+
+		if (hashesToGenerate > HASH_THRESHOLD) {
+			log.info("Replenishing {} hashes into Redis...", hashesToGenerate);
+			for (int i = 0; i < hashesToGenerate; i++) {
+				String hash = generateHash(UUID.randomUUID().toString());
+				redisService.pushValue(HASH_KEY, hash);
+				log.debug("Generated and stored hash: {}", hash);
+			}
+			log.info("Replenishing complete.");
+		} else {
+			log.debug("No need to replenish hashes. Redis already has {} hashes.", currentSize);
+		}
+		return CompletableFuture.completedFuture(null);
+	}
+
+	private int getRedisSize() {
+		Long size = redisService.getSize(HASH_KEY);
+		return size == null ? 0 : size.intValue();
+	}
+
+	private boolean isHashUnique(String hash) {
+		return !repository.existsByHash(hash);
 	}
 
 	private String generateHash(String input) {

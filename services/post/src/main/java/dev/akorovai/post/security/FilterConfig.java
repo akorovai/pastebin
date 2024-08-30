@@ -14,11 +14,11 @@ public class FilterConfig {
 
 	@Bean
 	public FilterRegistrationBean<JwtFilter> jwtFilterBean() {
-		log.info("Configuring JwtFilter with URL pattern: /api/posts/*");
+		log.info("Configuring JwtFilter with URL pattern: /api/*");
 
 		FilterRegistrationBean<JwtFilter> filterRegistrationBean = new FilterRegistrationBean<>();
 		filterRegistrationBean.setFilter(jwtFilter);
-		filterRegistrationBean.addUrlPatterns("/api/posts/*");
+		filterRegistrationBean.addUrlPatterns("/api/*");
 
 		log.info("JwtFilter registered successfully.");
 
