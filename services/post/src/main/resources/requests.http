@@ -1,12 +1,17 @@
+GET http://localhost:8020/api/posts/pSXm6FGAXJy
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuaWNrbmFtZSI6ImFrb3JvdmFpIiwidXNlcklkIjoiMjI2NTcyNWMtZjk1OC00YjkyLTgwY2YtODljYWM3OWE4NDZhIiwic3ViIjoiYWtvcm92YWkiLCJpYXQiOjE3MjUwMjcxNzgsImV4cCI6MTcyNTExMzU3OCwiYXV0aG9yaXRpZXMiOlsiVVNFUiJdfQ.BHLqnU4JsUkUoKbwL16kc9AJGyjwbMfL7py3r1e_xEnW94BIL69rwWwdLJKeA19S
+
 ### Create Post
 POST http://localhost:8020/api/posts
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuaWNrbmFtZSI6ImFrb3JvdmFpIiwidXNlcklkIjoiNDYxMTIzOTUtOTQ5ZC00NzdiLTkyNzgtOTE3YmQ2NmZiYjA0Iiwic3ViIjoiYWtvcm92YWkiLCJpYXQiOjE3MjQ5MzcwNTEsImV4cCI6MTcyNTAyMzQ1MSwiYXV0aG9yaXRpZXMiOlsiVVNFUiJdfQ.QOuhIla-qL1RPGJdMWTPm_rnatG4rwBQChqM34PCIN95cHJ0ugO5cWesLiR0XoUY
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuaWNrbmFtZSI6ImFrb3JvdmFpIiwidXNlcklkIjoiMjI2NTcyNWMtZjk1OC00YjkyLTgwY2YtODljYWM3OWE4NDZhIiwic3ViIjoiYWtvcm92YWkiLCJpYXQiOjE3MjUwMjcxNzgsImV4cCI6MTcyNTExMzU3OCwiYXV0aG9yaXRpZXMiOlsiVVNFUiJdfQ.BHLqnU4JsUkUoKbwL16kc9AJGyjwbMfL7py3r1e_xEnW94BIL69rwWwdLJKeA19S
 
 {
-  "title": "Sample Post Title",
-  "content": "This is the content of the sample post.",
+  "title": "Title",
+  "content": "Content",
   "language": "en",
-  "expiresAt": "2024-12-31T23:59:59",
+  "expiresAt": "2024-08-31T23:59:59",
   "isPublic": true
 }
+

@@ -28,14 +28,14 @@ public class PostServiceImpl implements PostService {
 		String hash = hashGeneratorService.generateUniqueHash();
 		log.debug("Generated unique hash: {}", hash);
 
+
+
 		Post post = Post.builder()
 				            .hash(hash)
-				            .s3Url(postRequest.s3Url())
 				            .userId(postRequest.userId())
 				            .language(postRequest.language())
 				            .expiresDate(postRequest.expiresAt())
 				            .isPublic(postRequest.isPublic())
-				            .viewCount(0)
 				            .build();
 
 		Post savedPost = repository.save(post);
@@ -53,7 +53,6 @@ public class PostServiceImpl implements PostService {
 					            log.error("Post with hash {} not found", hash);
 					            return new PostNotFoundException("Post with hash " + hash + " not found");
 				            });
-
 
 		eventPublisher.publishEvent(new PostViewedEvent(hash));
 		log.info("Post with hash {} is public and has been viewed", hash);

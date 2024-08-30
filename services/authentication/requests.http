@@ -1,0 +1,12 @@
+### Create Post
+POST http://localhost:8020/api/posts
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuaWNrbmFtZSI6ImFrb3JvdmFpIiwidXNlcklkIjoiMjI2NTcyNWMtZjk1OC00YjkyLTgwY2YtODljYWM3OWE4NDZhIiwic3ViIjoiYWtvcm92YWkiLCJpYXQiOjE3MjUwMjU0MTUsImV4cCI6MTcyNTExMTgxNSwiYXV0aG9yaXRpZXMiOlsiVVNFUiJdfQ.se6hYOZCMwwiCmAwNunD8sIthT_MrlKbqihEHeYfBkCcLVxT8Nb7PFkT3DxaHJBp
+
+{
+  "title": "Sample Post Title",
+  "content": "This is the content of the sample post.",
+  "language": "en",
+  "expiresAt": "2024-12-31T23:59:59",
+  "isPublic": true
+}

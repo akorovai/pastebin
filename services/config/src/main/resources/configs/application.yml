@@ -1,14 +1,14 @@
 eureka:
   instance:
-    hostname: localhost  # Ustawia nazwę hosta instancji Eureka na "localhost"
+    hostname: localhost
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka  # Adres URL serwera Eureka, do którego klient się łączy (serwer Eureka działa na localhost:8761)
+      defaultZone: http://localhost:8761/eureka
 
 name:
-  value: pastebin  # Nazwa usługi/aplikacji ustawiona na "akorovai"
+  value: pastebin
 
 spring:
   cloud:
     config:
-      override-system-properties: false  # Wyłącza nadpisywanie zmiennych systemowych przez konfigurację z Spring Cloud Config
+      override-system-properties: false

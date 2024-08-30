@@ -14,7 +14,6 @@ public class PostResponse {
 
 	private UUID userId;
 	private String hash;
-	private String s3Url;
 	private String language;
 	private LocalDateTime createdDate;
 	private LocalDateTime expiresDate;

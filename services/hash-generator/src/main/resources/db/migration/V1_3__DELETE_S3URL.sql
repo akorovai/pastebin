@@ -1,0 +1,1 @@
+ALTER TABLE posts.public.post DROP COLUMN s3_url;

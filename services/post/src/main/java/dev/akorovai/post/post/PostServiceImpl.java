@@ -1,15 +1,23 @@
 package dev.akorovai.post.post;
 
-import dev.akorovai.post.exception.PostNotFoundException;
-import dev.akorovai.post.exception.PostNotPublicException;
+import dev.akorovai.post.aws.S3PresignedUrlGenerator;
+import dev.akorovai.post.aws.InMemoryMultipartFile;
+import dev.akorovai.post.aws.StorageService;
+import dev.akorovai.post.exception.*;
 import dev.akorovai.post.hash.HashClient;
 import dev.akorovai.post.hash.PostHashRequest;
 import dev.akorovai.post.hash.PostHashResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Service
@@ -17,63 +25,105 @@ import java.util.UUID;
 @Slf4j
 public class PostServiceImpl implements PostService {
 
+	private static final long MAX_FILE_SIZE = Integer.toUnsignedLong(10 * (int) Math.pow(1024, 2));
+
 	private final HashClient hashClient;
+	private final StorageService storageService;
+	private final S3PresignedUrlGenerator s3PresignedUrlGenerator;
+
+	@Value("${io.reflectoring.aws.s3.bucketName}")
+	private String bucketName;
 
 	@Override
 	public PostResponse createPost(PostRequest request, String userId) {
 		log.info("Creating post for userId: {}", userId);
 
+		byte[] contentBytes = request.content().getBytes(StandardCharsets.UTF_8);
+		if (contentBytes.length > MAX_FILE_SIZE) {
+			log.error("File size exceeds the limit of 10 MB");
+			throw new FileSizeExceededException("File size exceeds the limit of 10 MB");
+		}
+
+
 		PostHashRequest psh = PostHashRequest.builder()
-				                      .s3Url("https://your-s3-bucket.s3.amazonaws.com/your-post-file.txt")
 				                      .language(request.language())
 				                      .userId(UUID.fromString(userId))
 				                      .expiresAt(request.expiresAt())
 				                      .isPublic(request.isPublic())
 				                      .build();
 
-		PostHashResponse newPost = hashClient.createPostWithGeneratedHash(psh)
-				                           .orElseThrow(() -> {
-					                           log.error("Failed to create post for userId: {}", userId);
-					                           return new RuntimeException("Failed to create post");
-				                           });
 
-		log.info("Post created successfully with hash: {}", newPost.hash());
+		PostHashResponse newPost = hashClient.createPostWithGeneratedHash(psh).orElseThrow(() -> {
+			log.error("Failed to create post for userId: {}", userId);
+			return new PostCreationFailedException("Failed to create post");
+		});
 
-		return PostResponse.builder()
-				       .userId(UUID.fromString(userId))
-				       .hash(newPost.hash())
-				       .s3Url("***")  // Assuming this is a placeholder or needs to be replaced with a dynamic value
-				       .language(newPost.language())
-				       .createdDate(newPost.createdDate())
-				       .expiresDate(newPost.expiresDate())
-				       .build();
+		String hash = newPost.hash();
+		log.info("Generated hash: {}", hash);
+
+
+		String presignedUrl = s3PresignedUrlGenerator.generatePresignedUrl(bucketName,   hash +
+				                                                                                 ".txt");
+
+		MultipartFile file = new InMemoryMultipartFile(bucketName, hash + ".txt", "text/plain", contentBytes);
+
+		try {
+			storageService.save(file);
+
+			log.info("Post created successfully with hash: {}", newPost.hash());
+
+			return PostResponse.builder()
+					       .userId(UUID.fromString(userId))
+					       .hash(newPost.hash())
+					       .s3Url(presignedUrl)
+					       .language(newPost.language())
+					       .createdDate(newPost.createdDate())
+					       .expiresDate(newPost.expiresDate())
+					       .build();
+		} catch (IOException e) {
+			log.error("Error saving file to S3", e);
+			throw new S3StorageException("Failed to save file to S3");
+		} catch (NoSuchBucketException e) {
+			log.error("The specified S3 bucket does not exist: {}", bucketName, e);
+			throw new S3StorageException("The specified S3 bucket does not exist");
+		}
 	}
 
 	@Override
-	public PostResponse getPost(String id, String userId) {
-		log.info("Retrieving post with ID: {} for userId: {}", id, userId);
+	public PostResponse getPost(String hash, String userId) {
+		log.info("Retrieving post with ID: {} for userId: {}", hash, userId);
 
-		PostHashResponse postByHash = hashClient.getPostByHash(id)
-				                              .orElseThrow(() -> {
-					                              log.error("Post with ID: {} not found", id);
-					                              return new PostNotFoundException(id);
-				                              });
+		PostHashResponse postByHash = hashClient.getPostByHash(hash).orElseThrow(() -> {
+			log.error("Post with ID: {} not found", hash);
+			return new PostNotFoundException(hash);
+		});
 
-		if (Boolean.FALSE.equals(postByHash.isPublic())) {
-			log.warn("Post with ID: {} is not public. UserId: {}", id, userId);
-			throw new PostNotPublicException(String.format(
-					"You don't have authority to see the post with ID: %s", id));
+		if (!userId.equals(postByHash.userId().toString()) && Boolean.FALSE.equals(postByHash.isPublic())) {
+			log.warn("Post with ID: {} is not public and user is not the owner. UserId: {}", hash, userId);
+			throw new PostNotPublicException(String.format("You don't have authority to see the post with ID: %s", hash));
 		}
 
-		log.info("Post retrieved successfully with hash: {}", postByHash.hash());
+		try {
+			storageService.retrieve(hash + ".txt");
 
-		return PostResponse.builder()
-				       .userId(UUID.fromString(userId))
-				       .hash(postByHash.hash())
-				       .s3Url(postByHash.s3Url())
-				       .language(postByHash.language())
-				       .createdDate(postByHash.createdDate())
-				       .expiresDate(postByHash.expiresDate())
-				       .build();
+			log.info("Post retrieved successfully with hash: {}", postByHash.hash());
+
+			String presignedUrl = s3PresignedUrlGenerator.generatePresignedUrl(bucketName,   hash + ".txt");
+
+			return PostResponse.builder()
+					       .userId(UUID.fromString(userId))
+					       .hash(postByHash.hash())
+					       .s3Url(presignedUrl)
+					       .language(postByHash.language())
+					       .createdDate(postByHash.createdDate())
+					       .expiresDate(postByHash.expiresDate())
+					       .build();
+		} catch (NoSuchKeyException e) {
+			log.error("The specified key does not exist in S3: {}", hash, e);
+			throw new PostNotFoundException("Post with ID: " + hash + " not found in S3");
+		} catch (NoSuchBucketException e) {
+			log.error("The specified S3 bucket does not exist: {}", bucketName, e);
+			throw new S3StorageException("The specified S3 bucket does not exist");
+		}
 	}
 }

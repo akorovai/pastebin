@@ -1,9 +1,10 @@
 package dev.akorovai.hashgenerator.post;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.validator.constraints.URL;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -29,9 +30,6 @@ public class Post {
 	@Column(nullable = false, name = "user_id")
 	private UUID userId;
 
-	@URL
-	@Column(name = "s3_url")
-	private String s3Url;
 
 	@Size(max = 50)
 	@Column(name = "language")
@@ -50,7 +48,5 @@ public class Post {
 	@Column(nullable = false, name = "is_public", columnDefinition = "BOOLEAN DEFAULT true")
 	private boolean isPublic;
 
-	@Min(0)
-	@Column(name = "view_count", columnDefinition = "INT DEFAULT 0")
-	private int viewCount;
+	private boolean active;
 }

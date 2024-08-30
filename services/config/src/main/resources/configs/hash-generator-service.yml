@@ -12,7 +12,7 @@ spring:
       ddl-auto: update
     show-sql: true
     database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    databasePlatform: org.hibernate.dialect.PostgreSQLDialect
   flyway:
     baselineOnMigrate: true
     enabled: true
@@ -21,6 +21,17 @@ spring:
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
     locations: classpath:db/migration
+  redis:
+    host: localhost
+    port: 7777
+
+
+
+io:
+  reflectoring:
+    aws:
+      s3:
+        bucket-name: pastebin_posts
 
 application:
   security:
