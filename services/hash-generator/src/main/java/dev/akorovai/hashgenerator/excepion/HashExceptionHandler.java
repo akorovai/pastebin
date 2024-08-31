@@ -21,4 +21,9 @@ public class HashExceptionHandler {
 		log.error("Hash generation error: {}", ex.getMessage());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
 	}
+	@ExceptionHandler(PostNotActiveException.class)
+	public ResponseEntity<String> handlePostNotActiveException(PostNotActiveException ex) {
+		log.error("Post not active: {}", ex.getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+	}
 }

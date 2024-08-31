@@ -1,7 +1,7 @@
 package dev.akorovai.authentication.security;
 
-
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -26,13 +27,15 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		log.info("Configuring security filter chain");
+
 		http
 				.cors(withDefaults())
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(req ->
 						                       req.requestMatchers(
 										                       "/api/auth/**",
-															   "/api-docs",
+										                       "/api-docs",
 										                       "/v2/api-docs",
 										                       "/v3/api-docs",
 										                       "/v3/api-docs/**",
@@ -52,6 +55,7 @@ public class SecurityConfig {
 				.authenticationProvider(authenticationProvider)
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
+		log.info("Security filter chain configured successfully");
 		return http.build();
 	}
 }

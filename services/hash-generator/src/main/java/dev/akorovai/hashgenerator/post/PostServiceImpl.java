@@ -1,6 +1,7 @@
 package dev.akorovai.hashgenerator.post;
 
 import dev.akorovai.hashgenerator.event.PostViewedEvent;
+import dev.akorovai.hashgenerator.excepion.PostNotActiveException;
 import dev.akorovai.hashgenerator.excepion.PostNotFoundException;
 import dev.akorovai.hashgenerator.hash.HashGeneratorService;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,9 @@ public class PostServiceImpl implements PostService {
 					            log.error("Post with hash {} not found", hash);
 					            return new PostNotFoundException("Post with hash " + hash + " not found");
 				            });
+		if(!post.isActive()) {
+			throw new PostNotActiveException(String.format("Post:%s is not active", post.getHash()));
+		}
 
 		eventPublisher.publishEvent(new PostViewedEvent(hash));
 		log.info("Post with hash {} is public and has been viewed", hash);

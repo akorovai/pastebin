@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,10 +12,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static jakarta.persistence.FetchType.EAGER;
 
@@ -43,21 +42,18 @@ public class User implements UserDetails, Principal {
 	private String password;
 
 	@ManyToMany(fetch = EAGER)
-	private List<Role> roles;
+	private List<Role> roles = new ArrayList<>();
 
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdDate;
 
-	@LastModifiedDate
-	@Column(insertable = false)
-	private LocalDateTime lastModifiedDate;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return this.roles.stream()
 				       .map(role -> new SimpleGrantedAuthority(role.getName()))
-				       .collect(Collectors.toList());
+				       .toList();
 	}
 
 	@Override

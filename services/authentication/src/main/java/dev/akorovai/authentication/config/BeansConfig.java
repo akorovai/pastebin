@@ -1,6 +1,7 @@
 package dev.akorovai.authentication.config;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -43,5 +44,8 @@ public class BeansConfig {
 		return new ApplicationAuditAware();
 	}
 
-
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
+	}
 }

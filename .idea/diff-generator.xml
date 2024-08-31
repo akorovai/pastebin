@@ -3,5 +3,7 @@
   <component name="DiffGenerationConfig">
     <option name="snapshotDb" value="false" />
     <option name="snapshotModelValue" value="hash-generator:hash-generator" />
+    <option name="sourceModelValue" value="authentication:authentication" />
+    <option name="targetDbValue" value="1675b7ef-a4e7-498b-a7fb-05f93d0393b3__users_public" />
   </component>
 </project>

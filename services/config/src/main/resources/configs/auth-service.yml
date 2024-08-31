@@ -23,6 +23,9 @@ spring:
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
     locations: classpath:db/migration
+  redis:
+    host: localhost
+    port: 6666
 
 application:
   security:

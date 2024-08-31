@@ -18,4 +18,7 @@ public interface PostRepository extends JpaRepository<Post,String> {
 	@Modifying
 	@Query("DELETE FROM Post p WHERE p.active = false AND p.expiresDate < :oneWeekAgo")
 	void deleteInactivePostsOlderThanWeek(@Param("oneWeekAgo") LocalDateTime oneWeekAgo);
+
+	@Query("SELECT p.hash FROM Post p WHERE p.active = false AND p.expiresDate < :oneWeekAgo ")
+	List<String> findInactivePostHashesOlderThanWeek( LocalDateTime oneWeekAgo );
 }

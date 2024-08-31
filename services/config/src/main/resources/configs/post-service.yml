@@ -11,6 +11,15 @@ logging:
   level:
     software.amazon.awssdk: DEBUG
 spring:
+  kafka:
+    consumer:
+      bootstrapServer: localhost:9092
+      group-id: postGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
   cloud:
     aws:
       credentials:
@@ -18,6 +27,9 @@ spring:
         secret-key: ${AWS_SECRET_KEY}
       s3:
         region: ${AWS_REGION}
+
+kafka:
+  topicName: delete-posts-topic
 
 io:
   reflectoring:

@@ -70,7 +70,7 @@ public class PostController {
 
 	@GetMapping("/{id}")
 	@Operation(
-			summary = "Retrieve a post by ID",
+			summary = "Retrieve a post by Hash",
 			description = "Retrieves a post by its unique identifier.",
 			responses = {
 					@ApiResponse(
@@ -104,4 +104,6 @@ public class PostController {
 		PostResponse response = service.getPost(id, userId);
 		return ResponseEntity.ok(response);
 	}
+
+
 }
