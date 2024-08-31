@@ -1,7 +1,7 @@
 package dev.akorovai.post.post;
 
-import dev.akorovai.post.aws.S3PresignedUrlGenerator;
 import dev.akorovai.post.aws.InMemoryMultipartFile;
+import dev.akorovai.post.aws.S3PresignedUrlGenerator;
 import dev.akorovai.post.aws.StorageService;
 import dev.akorovai.post.exception.*;
 import dev.akorovai.post.hash.HashClient;
@@ -36,6 +36,8 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public PostResponse createPost(PostRequest request, String userId) {
+
+
 		log.info("Creating post for userId: {}", userId);
 
 		byte[] contentBytes = request.content().getBytes(StandardCharsets.UTF_8);
@@ -98,6 +100,8 @@ public class PostServiceImpl implements PostService {
 			return new PostNotFoundException(hash);
 		});
 
+
+
 		if (!userId.equals(postByHash.userId().toString()) && Boolean.FALSE.equals(postByHash.isPublic())) {
 			log.warn("Post with ID: {} is not public and user is not the owner. UserId: {}", hash, userId);
 			throw new PostNotPublicException(String.format("You don't have authority to see the post with ID: %s", hash));
@@ -108,7 +112,8 @@ public class PostServiceImpl implements PostService {
 
 			log.info("Post retrieved successfully with hash: {}", postByHash.hash());
 
-			String presignedUrl = s3PresignedUrlGenerator.generatePresignedUrl(bucketName,   hash + ".txt");
+			String presignedUrl = s3PresignedUrlGenerator.generatePresignedUrl(bucketName,
+					hash + ".txt");
 
 			return PostResponse.builder()
 					       .userId(UUID.fromString(userId))

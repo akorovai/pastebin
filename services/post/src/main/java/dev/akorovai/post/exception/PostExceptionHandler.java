@@ -1,17 +1,17 @@
 package dev.akorovai.post.exception;
 
 import feign.FeignException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@Slf4j
 public class PostExceptionHandler {
 
-	private static final Logger log = LoggerFactory.getLogger(PostExceptionHandler.class);
+
 
 	@ExceptionHandler(PostNotFoundException.class)
 	public ResponseEntity<String> handlePostNotFoundException(PostNotFoundException ex) {

@@ -6,8 +6,8 @@ Develop a Pastebin system that allows users to create and share blocks of text. 
 ### Basic Requirements
 
 ### 1. Uploading and storing text blocks
-- [ ] A user can create a block of text and upload it to the Amazon S3 system.
-- [ ] The system must provide secure storage of text blocks in Amazon S3.
+- [x] A user can create a block of text and upload it to the Amazon S3 system.
+- [x] The system must provide secure storage of text blocks in Amazon S3.
 
 ### 2. URL generation and transmission
 - [x] The system must generate unique and short URLs for each text block.
