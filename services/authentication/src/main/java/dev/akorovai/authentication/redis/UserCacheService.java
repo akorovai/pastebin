@@ -1,27 +1,32 @@
 package dev.akorovai.authentication.redis;
 
-import dev.akorovai.authentication.user.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserCacheService {
-	private final RedisTemplate<String, User> redisTemplate;
+	private final RedisTemplate<String, UserCache> redisTemplate;
 
-
-	public void cacheUser(User user) {
-		redisTemplate.opsForValue().set(user.getUsername(), user, 1, TimeUnit.DAYS);
+	public void cacheUser(UserCache user) {
+		log.debug("Caching user: {}", user.getNickname());
+		redisTemplate.opsForValue().set(user.getNickname(), user, 1, TimeUnit.DAYS);
+		log.info("User cached: {}", user.getNickname());
 	}
 
-	public User getUser(String username) {
-		return redisTemplate.opsForValue().get(username);
-	}
-
-	public void evictUser(String nickname) {
-		redisTemplate.delete(nickname);
+	public UserCache getUser(String username) {
+		log.debug("Fetching user from cache: {}", username);
+		UserCache user = redisTemplate.opsForValue().get(username);
+		if (user != null) {
+			log.info("User found in cache: {}", username);
+		} else {
+			log.debug("User not found in cache: {}", username);
+		}
+		return user;
 	}
 }

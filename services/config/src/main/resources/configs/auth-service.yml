@@ -24,11 +24,9 @@ spring:
     password: ${spring.datasource.password}
     locations: classpath:db/migration
   redis:
-    cluster:
-      nodes:
-          - localhost:6379
-          - localhost:6380
-          - localhost:6381
+    host: localhost
+    port: 6666
+
 application:
   security:
     jwt:

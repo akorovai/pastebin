@@ -1,0 +1,1 @@
+ALTER TABLE users.public._user DROP COLUMN last_modified_date;
