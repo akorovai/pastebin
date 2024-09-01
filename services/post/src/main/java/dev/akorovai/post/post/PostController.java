@@ -1,5 +1,6 @@
 package dev.akorovai.post.post;
 
+import dev.akorovai.post.redis.RatingObject;
 import dev.akorovai.post.security.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/posts")
@@ -103,6 +106,14 @@ public class PostController {
 		String userId = jwtUtil.extractUserId(token);
 		PostResponse response = service.getPost(id, userId);
 		return ResponseEntity.ok(response);
+	}
+	@GetMapping("/rating")
+	@Operation(
+			summary = "Retrieve posts rating",
+					  description = "Retrieves top 100 the most popular posts"
+	)
+	public ResponseEntity<List<RatingObject>> getPostsRating(){
+		return ResponseEntity.ok().body(service.getRating());
 	}
 
 

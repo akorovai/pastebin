@@ -9,6 +9,7 @@ import dev.akorovai.post.hash.PostHashRequest;
 import dev.akorovai.post.hash.PostHashResponse;
 import dev.akorovai.post.redis.PostCache;
 import dev.akorovai.post.redis.PostCacheService;
+import dev.akorovai.post.redis.RatingObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -140,5 +142,11 @@ public class PostServiceImpl implements PostService {
 			log.error("The specified S3 bucket does not exist: {}", bucketName, e);
 			throw new S3StorageException("The specified S3 bucket does not exist");
 		}
+	}
+
+	@Override
+	public List<RatingObject> getRating() {
+		log.info("Retrieving rating objects");
+		return cacheService.getMostPopularPosts().stream().toList();
 	}
 }

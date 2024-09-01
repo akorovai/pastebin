@@ -10,7 +10,10 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -21,6 +24,7 @@ public class PostCacheService {
 	@Qualifier("customStringRedisTemplate")
 	private final RedisTemplate<String, String> postsLeaderBoardsRedisTemplate;
 	private static final String LIST_NAME = "POPULAR_POSTS";
+	private static final int TOP_LIMIT = 100;
 
 	public void savePost( PostResponse post, boolean isPublic) {
 		postsLeaderBoardsRedisTemplate.opsForZSet().add(LIST_NAME,
@@ -64,4 +68,28 @@ public class PostCacheService {
 			log.info("All counters reset successfully");
 		}
 	}
+
+	public Set<RatingObject> getMostPopularPosts() {
+		Set<ZSetOperations.TypedTuple<String>> topPosts =
+				postsLeaderBoardsRedisTemplate.opsForZSet().reverseRangeWithScores(LIST_NAME,
+						0, TOP_LIMIT - 1);
+
+		if (topPosts == null || topPosts.isEmpty()) {
+			log.info("No popular posts found");
+			return Collections.emptySet();
+		}
+
+		Set<RatingObject> popularPosts = topPosts.stream()
+				                                 .map(tuple -> RatingObject.builder()
+						                                               .number(String.valueOf(tuple.getScore()))
+						                                               .hash(Objects.requireNonNull(tuple.getValue()))
+						                                               .build())
+				                                 .collect(Collectors.toSet());
+
+		log.info("Retrieved {} most popular posts", popularPosts.size());
+		return popularPosts;
+	}
+
+
+
 }
