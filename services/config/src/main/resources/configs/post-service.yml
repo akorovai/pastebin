@@ -11,6 +11,9 @@ logging:
   level:
     software.amazon.awssdk: DEBUG
 spring:
+  redis:
+    host: localhost
+    port: 5555
   kafka:
     consumer:
       bootstrapServer: localhost:9092

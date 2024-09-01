@@ -15,7 +15,6 @@ public record PostHashRequest (
 		@NotBlank @Size(max = 50)
 		String language,
 
-
 		@NotNull
 		UUID userId,
 
