@@ -40,6 +40,4 @@ io:
       s3:
         bucketName: pastebin-posts
 
-springdoc:
-  swagger-ui:
-    path: /api-docs
+

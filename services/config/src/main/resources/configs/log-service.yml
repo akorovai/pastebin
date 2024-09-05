@@ -1,0 +1,22 @@
+spring:
+  data:
+    elasticsearch:
+      cluster-name: logs
+      cluster-nodes: localhost:9200
+      repositories:
+        enabled: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: logGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
+      value-deserializer: dev.akorovai.log.log_message.LogMessageDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+
+server:
+  port: 8040
+
+kafka:
+  topicName: log-topic

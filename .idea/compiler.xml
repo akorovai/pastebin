@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="hash-generator" />
         <module name="config" />
+        <module name="log" />
         <module name="discovery" />
         <module name="gateway" />
         <module name="authentication" />
@@ -38,6 +39,7 @@
       <module name="discovery" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="hash-generator" options="-parameters" />
+      <module name="log" options="-parameters" />
       <module name="post" options="-parameters" />
     </option>
   </component>
