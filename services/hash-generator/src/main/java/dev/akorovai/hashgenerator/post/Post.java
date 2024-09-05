@@ -1,7 +1,6 @@
 package dev.akorovai.hashgenerator.post;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -41,7 +40,6 @@ public class Post {
 	private LocalDateTime createdDate;
 
 	@NotNull
-	@Future
 	@Column(nullable = false, name = "expires_at")
 	private LocalDateTime expiresDate;
 

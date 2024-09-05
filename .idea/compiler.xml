@@ -10,6 +10,7 @@
         <module name="hash-generator" />
         <module name="config" />
         <module name="discovery" />
+        <module name="gateway" />
         <module name="authentication" />
       </profile>
       <profile name="Annotation profile for post" enabled="true">
@@ -35,6 +36,7 @@
       <module name="authentication" options="-parameters" />
       <module name="config" options="-parameters" />
       <module name="discovery" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="hash-generator" options="-parameters" />
       <module name="post" options="-parameters" />
     </option>

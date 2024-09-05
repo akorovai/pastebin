@@ -19,8 +19,8 @@ Develop a Pastebin system that allows users to create and share blocks of text. 
 - [x] The system should automatically deactivate and delete text blocks after the specified time.
 
 ### 4. Optional Features
-- [ ] The system shall support the ability to determine the popularity of posts.
-- [ ] The system shall take into account the frequency of posts created by different users.
+- [x] The system shall support the ability to determine the popularity of posts.
+- [x] The system shall take into account the frequency of posts created by different users.
 
 ### Technical Details
 
@@ -39,5 +39,6 @@ Develop a Pastebin system that allows users to create and share blocks of text. 
 ### 4. Monitoring and statistics
 - Implementation of a system for monitoring the popularity of posts.
 - Collect and analyze data about the frequency of posts created by different users.
+
 
 

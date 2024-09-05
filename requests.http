@@ -1,0 +1,50 @@
+@baseUrl = http://localhost:8222
+@registerEndpoint = /api/auth/register
+@loginEndpoint = /api/auth/login
+@postsEndpoint = /api/posts
+@ratingEndpoint = /api/posts/rating
+
+@postHash = oPUDILQuVFX
+@nickname = akorovai1234
+@password = password
+@token = eyJhbGciOiJIUzM4NCJ9.eyJuaWNrbmFtZSI6ImFrb3JvdmFpMTIzNCIsInVzZXJJZCI6IjIyMWYwZGViLWJjNDUtNDQyZC1iZjMyLTMzYTZkZWNkMzQ1NSIsInN1YiI6ImFrb3JvdmFpMTIzNCIsImlhdCI6MTcyNTU0MjU2MSwiZXhwIjoxNzI1NjI4OTYxLCJhdXRob3JpdGllcyI6WyJVU0VSIl19.xvpyl8ae09nleHCwReazGFgaONatJIOP8iRixOsooO9epH8BQ9Plq55ZDnHZRPIt
+### Register User
+POST {{baseUrl}}{{registerEndpoint}}
+Content-Type: application/json
+
+{
+  "nickname": "{{nickname}}",
+  "password": "{{password}}"
+}
+
+### Login User
+POST {{baseUrl}}{{loginEndpoint}}
+Content-Type: application/json
+
+{
+  "nickname": "{{nickname}}",
+  "password": "{{password}}"
+}
+
+### Get Posts Rating
+GET {{baseUrl}}{{ratingEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### Get Post by Hash
+GET {{baseUrl}}{{postsEndpoint}}/{{postHash}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### Create Post
+POST {{baseUrl}}{{postsEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Title",
+  "content": "Content",
+  "language": "en",
+  "expiresAt": "2025-10-31T23:59:59",
+  "isPublic": true
+}

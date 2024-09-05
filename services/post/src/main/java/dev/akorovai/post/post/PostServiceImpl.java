@@ -81,7 +81,7 @@ public class PostServiceImpl implements PostService {
 
 			cacheService.savePost(postResponse, request.isPublic());
 
-			log.info("Post created successfully with hash: {}", newPost.hash());
+			log.info("Post created successfully with hash: {}", hash);
 
 			return postResponse;
 		} catch (IOException e) {

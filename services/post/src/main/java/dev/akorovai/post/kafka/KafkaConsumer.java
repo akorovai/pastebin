@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class KafkaConsumer {
 	private final StorageService storageService;
-	private PostCacheService postCacheService;
+	private final PostCacheService postCacheService;
 	@KafkaListener(topics = "delete-posts-topic", groupId = "postGroup")
 	public void consumeHash(String hash){
 		log.info("Consumed hash: {}", hash);
