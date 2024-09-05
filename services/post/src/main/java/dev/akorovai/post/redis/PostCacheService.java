@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PostCacheService {
+
 	private final RedisTemplate<String, PostCache> postsRedisTemplate;
 
 	@Qualifier("customStringRedisTemplate")

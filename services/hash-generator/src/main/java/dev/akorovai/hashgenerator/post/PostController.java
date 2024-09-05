@@ -6,10 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/posts")
-@RequiredArgsConstructor
 @Slf4j
+@RestController
+@RequestMapping("/api/hash-post")
+@RequiredArgsConstructor
 public class PostController {
 
 	private final PostService service;

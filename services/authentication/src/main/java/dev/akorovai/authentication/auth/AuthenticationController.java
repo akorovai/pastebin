@@ -1,11 +1,5 @@
 package dev.akorovai.authentication.auth;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,25 +11,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/api/auth")
-@Tag(name = "Authentication", description = "Authentication API")
 public class AuthenticationController {
 
 	private final AuthenticationService service;
 
 	@PostMapping("/register")
-	@Operation(summary = "Register a new user", description = "Registers a new user with the provided details.")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "201", description = "User registered successfully",
-					content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "400", description = "Invalid input",
-					content = @Content(schema = @Schema(hidden = true)))
-	})
 	public ResponseEntity<ResponseObject> register(@RequestBody @Valid RegistrationRequest request) {
 		log.info("Registering user with nickname: {}", request.getNickname());
 		try {
@@ -57,13 +41,6 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/login")
-	@Operation(summary = "Authenticate a user", description = "Authenticates a user with the provided credentials.")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Authentication successful",
-					content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized",
-					content = @Content(schema = @Schema(hidden = true)))
-	})
 	public ResponseEntity<ResponseObject> authenticate(@RequestBody AuthenticationRequest request) {
 		log.info("Authenticating user with nickname: {}", request.getNickname());
 		try {
