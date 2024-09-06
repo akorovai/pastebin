@@ -1,3 +1,5 @@
+# Pastebin
+
 ## Terms of Reference for Pastebin
 
 ## General Description
@@ -41,4 +43,143 @@ Develop a Pastebin system that allows users to create and share blocks of text. 
 - Collect and analyze data about the frequency of posts created by different users.
 
 
+## Technologies used
 
+* Java 17
+* Spring: Web, Kafka, Validation
+* Spring Boot: (Web, Security)
+* Spring Cloud: Config, Eureka, OpenFeign
+* Spring Data JPA,
+* Flyway: Core, Database (PostgreSQL)
+* PostgreSQL JDBC Driver
+* ModelMapper, Lombok
+
+
+## Getting Started
+
+1. **Clone the repository:**
+
+    ```bash
+    git clone https://github.com/akorovai/pastebin.git
+    ```
+
+2. **Navigate to the repository directory:**
+
+    ```bash
+    cd pastebin
+    ```
+
+3. **Start Docker containers:**
+
+    ```bash
+    docker-compose up -d
+    ```
+
+4. **Navigate to the `services` directory:**
+
+    ```bash
+    cd services
+    ```
+
+5. **Build and run the services in the following order:**
+
+    - **Navigate to the `config` directory:**
+
+        ```bash
+        cd config
+        mvn clean install
+        mvn spring-boot:run
+        cd ..
+        ```
+
+    - **Navigate to the `discovery` directory:**
+
+        ```bash
+        cd discovery
+        mvn clean install
+        mvn spring-boot:run
+        cd ..
+        ```
+
+    - **Navigate to and build/run the remaining services in any order:**
+
+        ```bash
+        cd [remaining_service_directory]
+        mvn clean install
+        mvn spring-boot:run
+        cd ..
+        ```
+
+
+### Installation and Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/akorovai/pastebin.git
+   cd pastebin
+   ```
+
+2. Start Docker containers:
+   ```bash
+   docker-compose up -d
+   ```
+
+3. Build and run services:
+   ```bash
+   cd services
+   
+   # Config Service
+   cd config
+   mvn clean install
+   mvn spring-boot:run
+   cd ..
+   
+   # Discovery Service
+   cd discovery
+   mvn clean install
+   mvn spring-boot:run
+   cd ..
+   
+   # Build and run remaining services
+   for service in auth gateway hash-generator post; do
+     cd $service
+     mvn clean install
+     mvn spring-boot:run &
+     cd ..
+   done
+   ```
+
+## API Endpoints
+
+### Auth Service
+- `POST /api/auth/register`: Register a new user
+- `POST /api/auth/login`: Authenticate a user
+
+### Post Service
+- `POST /api/posts`: Create a new post
+- `GET /api/posts/{id}`: Retrieve a post
+- `GET /api/posts/rating`: Get post ratings
+
+### Hash-Generator Service
+- `POST /api/hash-post`: Create a post with a unique hash
+- `GET /api/hash-post/{hash}`: Retrieve a post by hash
+
+## Example
+
+- created `requests.http` file in main folder for example requests
+- 
+## Configuration
+
+- Active profile: `native` for `config`
+- Config Server: Loads configurations from a native location
+- Eureka Server: Runs on port 8761
+- Database and Kafka configurations are defined in respective service configurations
+
+## Security
+
+- JWT-based authentication
+- Spring Security for endpoint protection
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.

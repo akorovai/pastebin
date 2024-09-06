@@ -28,6 +28,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="auth" target="17" />
+      <module name="log" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
